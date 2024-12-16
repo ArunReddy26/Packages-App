@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddFavourite() {
 
@@ -11,11 +13,38 @@ function AddFavourite() {
     const [loading, setLoading] = useState(false);
     const [reason, setReason] = useState("");
 
-    async function fetchpackages(query) {
+    const addnotify = () => {
+      toast.success('Package Added to Favourites!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          });
+  
+  }
+
+   const addnotifydark = () => {
+        toast.success('Please select the package and provide a reason', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            });
+    
+    }
+
+    async function fetchpackages(search) {
         try {
-            const response = await fetch(`https://api.npms.io/v2/search?q=${query}`);
+            const response = await fetch(`https://api.npms.io/v2/search?q=${search}`);
             const data = await response.json();
-            console.log("data", data.results);
             setPackages(data.results);
         } catch (error) {
             console.error("Error fetching packages:", error);
@@ -38,7 +67,8 @@ function AddFavourite() {
       }
     
       if (!reason.trim()) {
-        alert("Please select the package and provide a reason.");
+       
+        addnotifydark()
         return;
       }
     
@@ -56,13 +86,12 @@ function AddFavourite() {
           reason,
         };
     
-        // Store the favorite package in localStorage
+       
         localStorage.setItem("favouritePackage", JSON.stringify(favourite));
     
-        console.log("Favourite Package Stored:", favourite);
-        alert(`Successfully added: ${name}`);
+        addnotify();
     
-        // Navigate back to the FavouritePage
+        
         navigate("/");
       } else {
         alert("Error storing the package details. Please try again.");
@@ -123,6 +152,7 @@ function AddFavourite() {
                             border: "1px solid #ccc",
                             resize: "none",
                         }}
+                        required
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
                     />

@@ -1,11 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const FavouritePage = () => {
   const [favourite, setFavourite] = useState(null);
   const navigate = useNavigate();
 
-  // Load favorite package details from localStorage
+  const addnotify = () => {
+        toast.success('Package Removed Successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
+    
+    }
+
+   
+
   useEffect(() => {
     const storedFavourite = localStorage.getItem("favouritePackage");
     if (storedFavourite) {
@@ -17,6 +34,12 @@ const FavouritePage = () => {
     navigate("/add-favorite");
   };
 
+  const handleRemoveFavourite = () => {
+    localStorage.removeItem("favouritePackage");
+    setFavourite(null); 
+    addnotify();
+  };
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 text-center w-96">
@@ -26,8 +49,8 @@ const FavouritePage = () => {
               Favourite Package Details
             </h1>
             <div className="border p-4 rounded-md mb-4">
-              <h2 className="text-lg font-semibold text-gray-700">{favourite.name}</h2>
-              <p className="text-gray-600 mt-2">{favourite.description}</p>
+              <h2 className="text-lg font-semibold text-gray-700"> <strong>Package Name: </strong>{favourite.name}</h2>
+              <p className="text-gray-600 mt-2"> <strong>Description: </strong>{favourite.description}</p>
               <div className="mt-4">
                 <a
                   href={favourite.homepage}
@@ -50,6 +73,12 @@ const FavouritePage = () => {
                 <strong>Reason:</strong> {favourite.reason}
               </p>
             </div>
+            <button
+              onClick={handleRemoveFavourite}
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg mt-4"
+            >
+              Remove Favourite
+            </button>
           </div>
         ) : (
           <>
@@ -61,7 +90,7 @@ const FavouritePage = () => {
         )}
         <button
           onClick={handleAddFavorite}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4"
         >
           Add Favourite
         </button>
